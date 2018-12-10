@@ -1,0 +1,49 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:1.11
+    volumes:
+      - ./deploy/conf.d:/etc/nginx/conf.d
+      - ./static:/opt/backend/static
+      - ../data/media:/opt/backend/media
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - wallpapers
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./
+      dockerfile: deploy/Dockerfile
+    restart: always
+    command: >
+      bash -c "
+        python3 manage.py migrate &&
+        python3 manage.py collectstatic --no-input &&
+        gunicorn --reload -b 0.0.0.0:8000 wallpapers.wsgi --workers 4 --timeout 300 --log-level DEBUG
+      "
+    ports:
+      - "8000:8050"
+    volumes:
+      - .:/code
+      - ../data/media:/media
+    networks:
+      - wallpapers
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    restart: always
+    networks:
+      - wallpapers
+    volumes:
+      - ../data/redis:/data
+
+networks:
+  wallpapers:
