@@ -1,0 +1,21 @@
+theflex.ga {
+    proxy / backend:8000 {
+        header_upstream Host {host}
+        header_upstream X-Real-IP {remote}
+    }
+    log stdout
+    errors stdout
+    gzip
+}
+
+theflex.ga/static {
+    root /opt/backend/static
+    header / Cache-Control "max-age=2592000"
+    gzip
+}
+
+theflex.ga/media {
+    root /opt/backend/media
+    header / Cache-Control "max-age=2592000"
+    gzip
+}

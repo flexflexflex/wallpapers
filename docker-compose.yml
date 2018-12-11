@@ -1,18 +1,22 @@
 version: "3"
 services:
-  nginx:
-    image: nginx:1.11
+  caddy:
+    image: abiosoft/caddy
     volumes:
-      - ./deploy/conf.d:/etc/nginx/conf.d
+      - ./deploy/caddy/Caddyfile:/etc/Caddyfile
       - ./static:/opt/backend/static
       - ../data/media:/opt/backend/media
     restart: always
-    ports:
-      - "80:80"
     networks:
       - wallpapers
     depends_on:
       - backend
+    ports:
+      - "9999:80"
+      - "9998:443"
+      - "80:2015"
+      - "443:2015"
+
 
   backend:
     build:
