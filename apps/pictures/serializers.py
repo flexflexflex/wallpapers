@@ -2,6 +2,12 @@ from .models import Picture, Tag
 from rest_framework import serializers
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['name', ]
+
+
 class PictureSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
 

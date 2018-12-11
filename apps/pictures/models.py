@@ -14,6 +14,8 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
+    category = models.ForeignKey(to='Category', on_delete=models.CASCADE)
+
     name = models.CharField(max_length=200, verbose_name='Имя', unique=True)
     description = models.TextField(verbose_name='Описание')
 
@@ -22,7 +24,7 @@ class Tag(models.Model):
         verbose_name_plural = 'Тэги'
 
     def __str__(self):
-        return self.name
+        return '%s | %s' % (self.category.name, self.name)
 
 
 class Picture(models.Model):
